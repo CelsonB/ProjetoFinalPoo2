@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LoginWindow extends JFrame {
 
@@ -16,18 +18,22 @@ public class LoginWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldNomeUsuario;
 	private JTextField textFieldSenha;
+	
+	
+	private static CadastrarWindow cadastrar;
+	
+	
 
-	/**
-	 * Launch the application.
-	 */
-	/**
-	 * Create the frame.
-	 */
+	
+	
 	public LoginWindow() {
 		initComponents();
+		
+		this.setVisible(true);
 	}
 	
 	public void initComponents() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 358, 161);
 		contentPane = new JPanel();
@@ -55,6 +61,16 @@ public class LoginWindow extends JFrame {
 		textFieldSenha.setColumns(10);
 		
 		JButton btnCadastrar = new JButton("Cadastrar");
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				cadastrar = new CadastrarWindow();
+				cadastrar.setVisible(true);
+				
+			
+			
+			}
+		});
 		btnCadastrar.setBounds(20, 90, 112, 23);
 		contentPane.add(btnCadastrar);
 		

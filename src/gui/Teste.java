@@ -9,8 +9,14 @@ public class Teste {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LoginWindow frame = new LoginWindow();
-					frame.setVisible(true);
+					
+					
+					LoginWindow login = new LoginWindow();
+					login.setVisible(true);
+					
+//					CadastrarWindow cadastrar = new CadastrarWindow();
+//					cadastrar.setVisible(false);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
