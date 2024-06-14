@@ -6,7 +6,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import entities.Usuario;
+import service.UsuarioService;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -75,7 +80,46 @@ public class LoginWindow extends JFrame {
 		contentPane.add(btnCadastrar);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				realizarLogin();
+			}
+		});
 		btnLogin.setBounds(205, 90, 112, 23);
 		contentPane.add(btnLogin);
 	}
+	
+	public void realizarLogin() {
+		
+		
+		try {
+			
+		
+		Usuario user = new Usuario();
+		UsuarioService usuarioService = new UsuarioService();
+//		user.setEmail(textFieldNomeUsuario.getText());
+		user.setSenha(textFieldSenha.getText());
+		
+		if(textFieldNomeUsuario.getText().contains("@")) {
+			user.setEmail(textFieldNomeUsuario.getText());
+		}else {
+			user.setNomeUsuario(textFieldNomeUsuario.getText());
+		}
+		
+		if(usuarioService.realizarLoginEmail(user)) {
+			JOptionPane.showMessageDialog(null, "Login realizado com sucesso");
+			PerfilWindow perfil = new PerfilWindow(user);
+			perfil.setVisible(true);
+			setVisible(false);
+		}else {
+			JOptionPane.showMessageDialog(null, "Senha ou usuario errados");
+		}
+		}catch(Exception ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		}
+	}
+	
+	
+	
+	
 }

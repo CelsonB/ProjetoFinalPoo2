@@ -11,7 +11,7 @@ public class Teste {
 				try {
 					
 					
-					LoginWindow login = new LoginWindow();
+					AgendaWindow login = new AgendaWindow();
 					login.setVisible(true);
 					
 //					CadastrarWindow cadastrar = new CadastrarWindow();

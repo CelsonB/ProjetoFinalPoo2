@@ -89,8 +89,15 @@ public class Usuario {
         this.senha = senha;
     }
 
-    // Enum para o campo genero
-    public enum Genero {
+    
+    @Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nomeCompleto=" + nomeCompleto + ", dataNascimento=" + dataNascimento
+				+ ", genero=" + genero + ", email=" + email + ", nomeUsuario=" + nomeUsuario + ", senha=" + senha + "]";
+	}
+
+
+	public enum Genero {
         M, F
     }
 }

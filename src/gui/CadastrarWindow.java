@@ -15,6 +15,7 @@ import entities.Usuario;
 import service.UsuarioService;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -155,12 +156,22 @@ public class CadastrarWindow extends JFrame {
 	
 	private UsuarioService usuarioService = new UsuarioService();
 	public void realizarCadastro()  {
-		SimpleDateFormat  formatter = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat  formatter = new SimpleDateFormat("dd/MM/yyyy");
 		java.util.Date date;
 		try {	
 			
-			Usuario userCadastro = new Usuario();
-			date = formatter.parse(textFieldDataDeNascimento.getText());
+			
+			
+			
+			  String dataDeNascimento = textFieldDataDeNascimento.getText();
+		        if (dataDeNascimento.isEmpty() ||!formatter.format(formatter.parse(dataDeNascimento)).equals(dataDeNascimento)) {
+		            JOptionPane.showMessageDialog(null, "Data de nascimento inválida");
+		            return;
+		        }
+		        
+		    Usuario userCadastro = new Usuario();
+		        
+			date = formatter.parse(dataDeNascimento);
 			userCadastro.setDataNascimento(date);
 			userCadastro.setNomeCompleto(textFieldNomeCompleto.getText());
 			userCadastro.setNomeUsuario(textFieldUsuario.getText());
@@ -173,12 +184,16 @@ public class CadastrarWindow extends JFrame {
 			}
 			userCadastro.setSenha(textFieldSenha.getText());
 		
-			usuarioService.realizarCadastro(userCadastro);
+			if(usuarioService.realizarCadastro(userCadastro)) {
+				JOptionPane.showMessageDialog(null, "Usuario cadastrado com sucesso");
+				
+				this.setVisible(false);
+
+			}
 			
 			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 		
 	
