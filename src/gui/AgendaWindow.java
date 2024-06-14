@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -13,8 +14,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
+
+import entities.Agenda;
+
+import entities.Usuario;
+import service.AgendaService;
+
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class AgendaWindow extends JFrame {
@@ -22,12 +32,46 @@ public class AgendaWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel contentPaneFilho;
-	
+	private AgendaService agendaService;
 	private JTable table;
-
+	private Usuario sessao;
 	
-	public AgendaWindow() {
+	public AgendaWindow(Usuario sessao) {
+		this.sessao = sessao;
+		agendaService = new AgendaService();
+		
 		initComponents();
+		buscarAgendas();
+	}
+	
+	public void buscarAgendas() {
+		
+		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+		
+		modelo.fireTableDataChanged();
+		
+		modelo.setRowCount(0);
+		
+		
+		List<Agenda> agendaLista;
+		try {
+			agendaLista = this.agendaService.listaAgendas(sessao.getId());
+			
+			for(Agenda agenda : agendaLista) {
+				modelo.addRow(new Object[] {
+						agenda.getNome(),
+						agenda.getDescricao(),
+						
+				});
+			}
+			
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		
+		
 	}
 	
 	
@@ -51,7 +95,7 @@ public class AgendaWindow extends JFrame {
 				new Object[][] {
 				},
 				new String[] {
-					"Descri\u00E7\u00E3o", "Nome"
+						"Nome","Descri\u00E7\u00E3o"
 				}
 			));
 			
@@ -137,7 +181,7 @@ public class AgendaWindow extends JFrame {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				criarAgenda();
+				criarAgenda(textFieldNomeAgenda.getText(),textAreaDescricao.getText());
 			}
 		});
 	
@@ -156,7 +200,21 @@ public class AgendaWindow extends JFrame {
 			}
 		});		
 	}
-	public void criarAgenda() {
+	public void criarAgenda(String nome, String descricao) {
+		
+		try {
+			if(agendaService.criarAgenda(nome, descricao, this.sessao.getId())) {
+				JOptionPane.showMessageDialog(null, "Agenda cadastrada com sucesso");
+				setContentPane(contentPane);
+				contentPaneFilho.setVisible(false);
+				buscarAgendas();
+			}
+			
+		} catch (IOException | SQLException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
 		
 	}
 }

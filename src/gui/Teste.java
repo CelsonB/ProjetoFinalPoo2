@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.EventQueue;
 
+import entities.Usuario;
+
 public class Teste {
 
 	public static void main(String[] args) {
@@ -10,8 +12,9 @@ public class Teste {
 			public void run() {
 				try {
 					
-					
-					AgendaWindow login = new AgendaWindow();
+					Usuario user = new Usuario();
+					user.setId(3);
+					AgendaWindow login = new AgendaWindow(user);
 					login.setVisible(true);
 					
 //					CadastrarWindow cadastrar = new CadastrarWindow();

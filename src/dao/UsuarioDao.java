@@ -96,6 +96,7 @@ public class UsuarioDao  extends BancoDeDados{
 		
 		if(result.next()) {
 			System.out.println(result.toString());
+			user.setId(result.getInt("id"));
 			user.setDataNascimento(result.getDate("data_nascimento"));
 			user.setNomeCompleto(result.getString("nome_completo"));
 			user.setEmail(email);

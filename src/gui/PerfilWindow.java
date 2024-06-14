@@ -108,7 +108,7 @@ public class PerfilWindow extends JFrame {
 	}
 	
 	private void abrirAgenda() {
-		
+		new AgendaWindow(sessao);
 	}
 	
 	private String retornarGenero() {
