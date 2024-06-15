@@ -35,6 +35,8 @@ public class AgendaWindow extends JFrame {
 	private AgendaService agendaService;
 	private JTable table;
 	private Usuario sessao;
+	private JTextField textFieldNomeAgenda;
+	
 	
 	public AgendaWindow(Usuario sessao) {
 		this.sessao = sessao;
@@ -59,6 +61,7 @@ public class AgendaWindow extends JFrame {
 			
 			for(Agenda agenda : agendaLista) {
 				modelo.addRow(new Object[] {
+						agenda.getId(),
 						agenda.getNome(),
 						agenda.getDescricao(),
 						
@@ -70,7 +73,7 @@ public class AgendaWindow extends JFrame {
 		}
 		
 		
-		
+		 
 		
 	}
 	
@@ -95,7 +98,7 @@ public class AgendaWindow extends JFrame {
 				new Object[][] {
 				},
 				new String[] {
-						"Nome","Descri\u00E7\u00E3o"
+						"id","Nome","Descri\u00E7\u00E3o"
 				}
 			));
 			
@@ -111,6 +114,15 @@ public class AgendaWindow extends JFrame {
 			JButton btnDeletarAgenda = new JButton("Deletar agenda");
 			btnDeletarAgenda.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					
+					
+					
+					if(table.getSelectedRow()!=-1) {
+						deletarAgenda();
+					}else {
+						JOptionPane.showMessageDialog(null, "Nenhuma agenda selecionada", "Editar agenda",  JOptionPane.WARNING_MESSAGE );
+					}
+					
 				}
 			});
 			btnDeletarAgenda.setBounds(0, 34, 122, 23);
@@ -131,12 +143,43 @@ public class AgendaWindow extends JFrame {
 					
 				}
 			});
+			
+			btnEditarAgenda.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent e) {
+					if(table.getSelectedRow()!=-1) {
+						editarAgenda();
+					}else {
+						JOptionPane.showMessageDialog(null, "Nenhuma agenda selecionada", "Editar agenda",  JOptionPane.WARNING_MESSAGE );
+					}
+					
+					
+				}
+			});
+	
 		
 	}
 	
+	private void deletarAgenda() {
+		
+		
+		try {
+		
+			int id = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+			
+			if(agendaService.apagarAgenda(id)) {
+				JOptionPane.showMessageDialog(null, "Agenda apagada com sucesso");
+				buscarAgendas();
+			}
+			
+		} catch (IOException | SQLException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
 	
 
-	private JTextField textFieldNomeAgenda;
 	
 	
 	private void cadastrarAgenda() {
@@ -200,7 +243,95 @@ public class AgendaWindow extends JFrame {
 			}
 		});		
 	}
-	public void criarAgenda(String nome, String descricao) {
+	
+		private void editarAgenda() {
+			
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setBounds(100, 100, 328, 343);
+			contentPaneFilho = new JPanel();
+			contentPaneFilho.setBorder(new EmptyBorder(5, 5, 5, 5));
+	
+			setContentPane(contentPaneFilho);
+			contentPaneFilho.setLayout(null);
+			
+			JLabel lblNomeAgenda = new JLabel("Nome da agenda");
+			lblNomeAgenda.setBounds(10, 11, 99, 14);
+			contentPaneFilho.add(lblNomeAgenda);
+			
+			JLabel lblDescricao = new JLabel("Descri\u00E7\u00E3o da agenda");
+			lblDescricao.setBounds(10, 88, 137, 14);
+			contentPaneFilho.add(lblDescricao);
+			
+			textFieldNomeAgenda = new JTextField();
+			textFieldNomeAgenda.setBounds(10, 29, 201, 20);
+			textFieldNomeAgenda.setText(table.getValueAt(table.getSelectedRow(), 1).toString());
+			contentPaneFilho.add(textFieldNomeAgenda);
+			textFieldNomeAgenda.setColumns(10);
+			
+			JPanel panel = new JPanel();
+			panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+			panel.setBounds(10, 113, 287, 135);
+			contentPaneFilho.add(panel);
+			panel.setLayout(null);
+			
+			JTextArea textAreaDescricao = new JTextArea();
+			textAreaDescricao.setBounds(3, 2, 280, 130);
+			textAreaDescricao.setText(table.getValueAt(table.getSelectedRow(), 2).toString());
+			panel.add(textAreaDescricao);
+			textAreaDescricao.setLineWrap(true);
+			
+			JButton btnEditarAgenda = new JButton("Atualizar agenda");
+			btnEditarAgenda.setBounds(10, 270, 140, 23);
+			contentPaneFilho.add(btnEditarAgenda);
+			
+			btnEditarAgenda.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent e) {
+					
+					System.out.println(table.getValueAt(table.getSelectedRow(), 1).toString()+"   " + table.getValueAt(table.getSelectedRow(), 2).toString());
+					atualizarAgenda(textFieldNomeAgenda.getText(),textAreaDescricao.getText());
+					buscarAgendas();
+				}
+			});
+	
+		
+		JButton btnVoltarCriarAgenda = new JButton("Voltar");
+		btnVoltarCriarAgenda.setBounds(157, 270, 140, 23);
+		contentPaneFilho.add(btnVoltarCriarAgenda);
+		
+		
+		btnVoltarCriarAgenda.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				setContentPane(contentPane);
+				contentPaneFilho.setVisible(false);
+				
+			}
+		});		
+	}
+
+	
+	private void atualizarAgenda(String nome,String descricao) {
+		try {
+			int id = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+			System.out.println(id);
+			if(agendaService.atualizarAgenda(nome, descricao, id)) {
+				JOptionPane.showMessageDialog(null, "Agenda atualizada com sucesso");
+				setContentPane(contentPane);
+				contentPaneFilho.setVisible(false);
+				buscarAgendas();
+			}
+			
+		} catch (IOException | SQLException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		
+	}
+	
+	private void criarAgenda(String nome, String descricao) {
 		
 		try {
 			if(agendaService.criarAgenda(nome, descricao, this.sessao.getId())) {

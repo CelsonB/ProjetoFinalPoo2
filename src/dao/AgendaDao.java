@@ -27,7 +27,7 @@ public class AgendaDao extends BancoDeDados {
 			tempAgenda.setId(result.getInt("id"));
 			tempAgenda.setNome(result.getString("nome"));
 			tempAgenda.setDescricao(result.getString("descricao"));
-			tempAgenda.setId(id);
+		
 			
 			listaAgendas.add(tempAgenda);
 		}
@@ -43,6 +43,36 @@ public class AgendaDao extends BancoDeDados {
 		st.setString(1, nome);
 		st.setString(2, descricao);
 		st.setInt(3, id);
+		int result= st.executeUpdate();
+		
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public boolean atualizarAgenda(String nome, String descricao, int id ) throws IOException, SQLException {
+		PreparedStatement st;
+		super.Conectar();
+		st = super.conn.prepareStatement("update Agendas set  nome = ? , descricao = ? WHERE id = ? ");
+		st.setString(1, nome);
+		st.setString(2, descricao);
+		st.setInt(3, id);
+		int result= st.executeUpdate();
+		
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public boolean apagarAgenda(int id) throws IOException, SQLException {
+		PreparedStatement st;
+		super.Conectar();
+		st = super.conn.prepareStatement("DELETE FROM agendas where id = ?");
+		st.setInt(1, id);
 		int result= st.executeUpdate();
 		
 		if(result>0) {
