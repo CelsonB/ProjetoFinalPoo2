@@ -71,6 +71,7 @@ public class LoginWindow extends JFrame {
 			
 				cadastrar = new CadastrarWindow();
 				cadastrar.setVisible(true);
+				dispose();
 				
 			
 			
@@ -99,18 +100,15 @@ public class LoginWindow extends JFrame {
 		UsuarioService usuarioService = new UsuarioService();
 //		user.setEmail(textFieldNomeUsuario.getText());
 		user.setSenha(textFieldSenha.getText());
-		
-		if(textFieldNomeUsuario.getText().contains("@")) {
-			user.setEmail(textFieldNomeUsuario.getText());
-		}else {
-			user.setNomeUsuario(textFieldNomeUsuario.getText());
-		}
-		
-		if(usuarioService.realizarLoginEmail(user)) {
+		user.setEmail(textFieldNomeUsuario.getText());
+		System.out.println(user);
+		user = usuarioService.realizarLoginEmail(user);
+		System.out.println(user);
+		if(user.getId()!=0) {
 			JOptionPane.showMessageDialog(null, "Login realizado com sucesso");
 			PerfilWindow perfil = new PerfilWindow(user);
 			perfil.setVisible(true);
-			setVisible(false);
+			dispose();
 		}else {
 			JOptionPane.showMessageDialog(null, "Senha ou usuario errados");
 		}

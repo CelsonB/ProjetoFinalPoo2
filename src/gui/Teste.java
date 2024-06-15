@@ -14,7 +14,7 @@ public class Teste {
 					
 					Usuario user = new Usuario();
 					user.setId(3);
-					AgendaWindow login = new AgendaWindow(user);
+					LoginWindow login = new LoginWindow();
 					login.setVisible(true);
 					
 //					CadastrarWindow cadastrar = new CadastrarWindow();

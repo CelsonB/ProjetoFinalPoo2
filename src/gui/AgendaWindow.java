@@ -135,6 +135,17 @@ public class AgendaWindow extends JFrame {
 			JButton btnVoltar = new JButton("Voltar");
 			btnVoltar.setBounds(146, 34, 130, 23);
 			panel.add(btnVoltar);
+			
+			btnVoltar.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent e) {
+					
+					new PerfilWindow(sessao).setVisible(true);
+					dispose();
+					
+				}
+			});
+			
 			btnCriarAgeda.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent e) {

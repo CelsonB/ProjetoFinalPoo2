@@ -45,52 +45,53 @@ public class UsuarioDao  extends BancoDeDados{
 		}
 	}
 	
-	public boolean realizarLogin(Usuario userLogin) throws IOException, SQLException {
+
+	
+	public Usuario realizarLoginUsuario(Usuario userLogin) throws IOException, SQLException {
+		Usuario user = new Usuario();
 		PreparedStatement st;
 		super.Conectar();
-		st = super.conn.prepareStatement("SELECT * FROM usuarios WHERE email = ? AND senha =?");
+		st = super.conn.prepareStatement("SELECT * FROM usuarios WHERE email = ? AND senha = ?");
 	
 		st.setString(1,userLogin.getEmail());
 		st.setString(2,userLogin.getSenha());
 	
 		ResultSet result= st.executeQuery();
-		
 		if(result.next()) {
-			return true;
+		
+			System.out.println(result.toString());
+			user.setId(result.getInt("id"));
+			user.setDataNascimento(result.getDate("data_nascimento"));
+			user.setNomeCompleto(result.getString("nome_completo"));
+			user.setEmail(result.getString("email"));
+			user.setSenha(result.getString("senha"));
+			if(result.getString("genero")=="M") {
+				user.setGenero(Usuario.Genero.M);
+			}else {
+				user.setGenero(Usuario.Genero.F);
+			}
+			user.setNomeUsuario(result.getString("nome_usuario"));
+		
+			System.out.println(user);
+			return user;
+			
 		}else {
-			return false;
+			System.out.println("Deu erro");
+			return userLogin;
 		}
 
 	}
 	
-	public boolean realizarLoginUsuario(Usuario userLogin) throws IOException, SQLException {
-		PreparedStatement st;
-		super.Conectar();
-		st = super.conn.prepareStatement("SELECT * FROM usuarios WHERE email = ? AND senha = ?");
-	
-		st.setString(1,userLogin.getNomeUsuario());
-		st.setString(2,userLogin.getSenha());
-	
-		ResultSet result= st.executeQuery();
-		
-		if(result.next()) {
-			return true;
-		}else {
-			return false;
-		}
-
-	}
-	
-	public Usuario visualizarUsuario(String email, String senha) throws IOException, SQLException {
+	public Usuario visualizarUsuario(int id ) throws IOException, SQLException {
 		Usuario user = new Usuario();
 		
 		
 		PreparedStatement st;
 		super.Conectar();
-		st = super.conn.prepareStatement("SELECT * FROM usuarios WHERE email = ? AND senha = ?");
+		st = super.conn.prepareStatement("SELECT * FROM usuarios WHERE id = ?");
 	
-		st.setString(1,email);
-		st.setString(2,senha);
+		st.setInt(1,id);
+		
 	
 		ResultSet result= st.executeQuery();
 		
@@ -99,8 +100,8 @@ public class UsuarioDao  extends BancoDeDados{
 			user.setId(result.getInt("id"));
 			user.setDataNascimento(result.getDate("data_nascimento"));
 			user.setNomeCompleto(result.getString("nome_completo"));
-			user.setEmail(email);
-			user.setSenha(senha);
+			user.setEmail(result.getString("email"));
+			user.setSenha(result.getString("senha"));
 			if(result.getString("genero")=="M") {
 				user.setGenero(Usuario.Genero.M);
 			}else {

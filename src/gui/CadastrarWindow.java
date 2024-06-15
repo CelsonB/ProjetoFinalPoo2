@@ -146,7 +146,8 @@ public class CadastrarWindow extends JFrame {
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
+				new LoginWindow().setVisible(true);
+				dispose();
 				
 			}
 		});
@@ -187,7 +188,8 @@ public class CadastrarWindow extends JFrame {
 			if(usuarioService.realizarCadastro(userCadastro)) {
 				JOptionPane.showMessageDialog(null, "Usuario cadastrado com sucesso");
 				
-				this.setVisible(false);
+				new LoginWindow().setVisible(true);
+				dispose();
 
 			}
 			

@@ -29,33 +29,23 @@ public class UsuarioService {
 		
 	}
 	
-	public boolean realizarLoginEmail(Usuario userLogin) {
+	public Usuario realizarLoginEmail(Usuario userLogin) throws IOException, SQLException {
 		UsuarioDao bd = new UsuarioDao();		
-		
-		try {
-			if(userLogin.getEmail()==null && bd.realizarLoginUsuario(userLogin)) {
-					return true;
-			}else if(bd.realizarLogin(userLogin)){
-				
-				return true;
-			}else {	
-				return false;
-			}
-		} catch (IOException | SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
-		}
-		return false;
+		Usuario user = new Usuario();
+		user = bd.realizarLoginUsuario(userLogin);
+		System.out.println(user);
+		return user;
+			 
 
 	}
 	
-	public Usuario visualizarUsuario(Usuario user) throws IOException, SQLException {
+	public Usuario visualizarUsuario(int id) throws IOException, SQLException {
 		UsuarioDao bd = new UsuarioDao();		
-		String email = user.getEmail();
-		String senha = user.getSenha();
+//		String email = user.getEmail();
+//		String senha = user.getSenha();
 		
 
-		return bd.visualizarUsuario(email, senha);
+		return bd.visualizarUsuario(id);
 	}
 	
 	

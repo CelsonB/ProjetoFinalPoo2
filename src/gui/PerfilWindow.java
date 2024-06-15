@@ -29,12 +29,15 @@ public class PerfilWindow extends JFrame {
 	private UsuarioService usuarioService;
 
 	private Usuario sessao; 
-	public PerfilWindow(Usuario user){
+	public PerfilWindow(Usuario sessao){
 		
 		usuarioService = new UsuarioService();
 		try {
-			sessao = usuarioService.visualizarUsuario(user);
-			
+			if(sessao.getEmail()==null) sessao = usuarioService.visualizarUsuario(sessao.getId());
+			else this.sessao = sessao;
+				
+				
+				
 			System.out.println(sessao.toString());
 		} catch (IOException | SQLException e) {
 			System.out.println(e.getMessage());
