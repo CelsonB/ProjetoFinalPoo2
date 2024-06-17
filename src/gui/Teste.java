@@ -14,7 +14,7 @@ public class Teste {
 					
 					Usuario user = new Usuario();
 					user.setId(3);
-					LoginWindow login = new LoginWindow();
+					PerfilWindow login = new PerfilWindow(user);
 					login.setVisible(true);
 					
 //					CadastrarWindow cadastrar = new CadastrarWindow();

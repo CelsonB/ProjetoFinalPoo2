@@ -3,14 +3,21 @@ package gui;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import entities.Agenda;
+import entities.Compromisso;
 import entities.Usuario;
+import service.AgendaService;
+import service.CompromissoService;
 import service.UsuarioService;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -21,34 +28,44 @@ import javax.swing.border.BevelBorder;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
 
 public class PerfilWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private UsuarioService usuarioService;
-
+	private AgendaService agendaService;
 	private Usuario sessao; 
+	private JTable table;
+	private JTable tableAgenda;
+	private CompromissoService compromissoService;
 	public PerfilWindow(Usuario sessao){
 		
 		usuarioService = new UsuarioService();
+		compromissoService = new CompromissoService();
 		try {
-			if(sessao.getEmail()==null) sessao = usuarioService.visualizarUsuario(sessao.getId());
+			if(sessao.getEmail()==null) this.sessao = usuarioService.visualizarUsuario(sessao.getId());
 			else this.sessao = sessao;
 				
+			agendaService = new AgendaService();
+			initComponents();
+			buscarAgendas();	
+			//buscarCompromissos();
 				
-				
-			System.out.println(sessao.toString());
+			
 		} catch (IOException | SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		initComponents();
+		
 		
 	}
 	
 	public void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 443);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -60,16 +77,16 @@ public class PerfilWindow extends JFrame {
 		panel.setBounds(10, 10, 285, 99);
 		contentPane.add(panel);
 		
-		JLabel lblNomeCompleto = new JLabel("Nome: " + sessao.getNomeCompleto());
+		JLabel lblNomeCompleto = new JLabel("Nome: " + this.sessao.getNomeCompleto());
 		lblNomeCompleto.setBounds(10, 8, 265, 14);
 		
-		JLabel lblEmail = new JLabel("Email: " +sessao.getEmail());
+		JLabel lblEmail = new JLabel("Email: " +this.sessao.getEmail());
 		lblEmail.setBounds(10, 52, 265, 14);
 		
-		JLabel lblDataDeNascimento = new JLabel("Data de nascimento: " +sessao.getDataNascimento().toString());
+		JLabel lblDataDeNascimento = new JLabel("Data de nascimento: " +this.sessao.getDataNascimento().toString());
 		lblDataDeNascimento.setBounds(10, 74, 265, 14);
 		
-		JLabel lblGenero = new JLabel("Genero: " +sessao.getGenero().toString());
+		JLabel lblGenero = new JLabel("Genero: " +this.sessao.getGenero().toString());
 		lblGenero.setBounds(10, 30, 265, 14);
 		panel.setLayout(null);
 		panel.add(lblNomeCompleto);
@@ -94,24 +111,72 @@ public class PerfilWindow extends JFrame {
 		btnDeslogar.setBounds(0, 67, 119, 23);
 		panel_1.add(btnDeslogar);
 		
-		JButton btnCompromissos = new JButton("Compromissos");
-		btnCompromissos.setBounds(10, 227, 87, 23);
+		JButton btnCompromissos = new JButton("Configurar compromissos");
+		btnCompromissos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnCompromissos.setBounds(10, 336, 203, 23);
 		contentPane.add(btnCompromissos);
 		
-		JButton btnAgenda = new JButton("Agenda");
+		JButton btnAgenda = new JButton("Configurar agendas");
+		
 		btnAgenda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirAgenda();
 			}
 		});
-		btnAgenda.setBounds(335, 227, 89, 23);
+		btnAgenda.setBounds(242, 336, 182, 23);
 		contentPane.add(btnAgenda);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 127, 203, 198);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Titulo", "Data de inicio"
+			}
+		));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(242, 128, 182, 197);
+		contentPane.add(scrollPane_1);
+		
+		tableAgenda = new JTable();
+		scrollPane_1.setViewportView(tableAgenda);
+		tableAgenda.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"id", "Agenda"
+			}
+		));
+		
+		JButton btnSelecionarAgenda = new JButton("Selecionar agenda");
+		btnSelecionarAgenda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(tableAgenda.getSelectedRow()!=-1) {
+					buscarCompromissos();
+				}else {
+					JOptionPane.showMessageDialog(null, "Nenhuma agenda selecionada", "Editar agenda",  JOptionPane.WARNING_MESSAGE );
+				}
+				
+			}
+		});
+		btnSelecionarAgenda.setBounds(242, 370, 182, 23);
+		contentPane.add(btnSelecionarAgenda);
 		
 		
 	}
 	
 	private void abrirAgenda() {
-		new AgendaWindow(sessao);
+		new AgendaWindow(sessao).setVisible(true);
+		dispose();
 	}
 	
 	private String retornarGenero() {
@@ -121,4 +186,66 @@ public class PerfilWindow extends JFrame {
 					return "Masculino";
 				}
 	}
+	
+	public void buscarAgendas() {
+		
+		DefaultTableModel modelo = (DefaultTableModel) tableAgenda.getModel();
+		
+		modelo.fireTableDataChanged();
+		
+		modelo.setRowCount(0);
+		
+		
+		List<Agenda> agendaLista;
+		try {
+			agendaLista = this.agendaService.listaAgendas(sessao.getId());
+			
+			for(Agenda agenda : agendaLista) {
+				modelo.addRow(new Object[] {
+						agenda.getId(),
+						agenda.getNome(),
+						
+						
+				});
+			}
+			
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		 
+		
+	}
+	
+	public void buscarCompromissos() {
+
+		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+		
+		modelo.fireTableDataChanged();
+		
+		modelo.setRowCount(0);
+		
+		
+		List<Compromisso> compromissoLista;
+		try {
+			int id = Integer.parseInt(tableAgenda.getValueAt(tableAgenda.getSelectedRow(), 0).toString());
+			compromissoLista = this.compromissoService.listaCompromisso(id);
+			
+			for(Compromisso compromisso : compromissoLista) {
+				modelo.addRow(new Object[] {
+						
+						compromisso.getTitulo(),
+						compromisso.getDataHoraInicio()
+						
+				});
+			}
+			
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
+	
+	
 }
