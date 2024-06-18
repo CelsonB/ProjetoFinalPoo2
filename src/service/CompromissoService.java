@@ -17,4 +17,11 @@ public class CompromissoService {
 		agenda.setId(id);
 		return bd.listarCompromissos(agenda);
 	}
+	
+	public boolean cadastrarCompromisso(Compromisso compCadastro) throws SQLException, IOException {
+		CompromissoDao bd = new CompromissoDao();
+		bd.cadastrarCompromisso(compCadastro);
+		
+		return true;
+	}
 }

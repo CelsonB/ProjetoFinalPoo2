@@ -50,17 +50,17 @@ public class CompromissoDao extends BancoDeDados {
 		PreparedStatement st;
 		super.Conectar();
 		st = super.conn.prepareStatement("INSERT INTO COMPROMISSOS "
-				+ "(titulos,descricao,data_hora_inicio,data_hora_termino,local,id_agenda,data_hora_notificacao)"
+				+ "(titulo,descricao,data_hora_inicio,data_hora_termino,local,id_agenda,data_hora_notificacao)"
 				+ "VALUES(?,?,?,?,?,?,?)");
 		st.setString(1, compromisso.getTitulo());
 		st.setString(2, compromisso.getDescricao());
 		
-		st.setDate(3, new java.sql.Date(compromisso.getDataHoraInicio().getTime()));
-		st.setDate(4, new java.sql.Date(compromisso.getDataHoraTermino().getTime()));
+		st.setTimestamp(3, new java.sql.Timestamp (compromisso.getDataHoraInicio().getTime()));
+		st.setTimestamp(4, new java.sql.Timestamp (compromisso.getDataHoraTermino().getTime()));
 		
 		st.setString(5, compromisso.getLocal());
 		st.setInt(6, compromisso.getAgenda().getId());
-		st.setDate(7, new java.sql.Date(compromisso.getDataHoraNotificacao().getTime()));
+		st.setTimestamp(7, new java.sql.Timestamp (compromisso.getDataHoraNotificacao().getTime()));
 		
 		
 		int result= st.executeUpdate();
@@ -137,7 +137,7 @@ public class CompromissoDao extends BancoDeDados {
 		super.Conectar();
 		st = super.conn.prepareStatement
 				( " UPDATE COMPROMISSOS"
-				+ " SET titulos =? ,descricao  =?  ,data_hora_inicio =? ,data_hora_termino =? ,local =? ,id_agenda =? ,data_hora_notificacao =? "
+				+ " SET titulo =? ,descricao  =?  ,data_hora_inicio =? ,data_hora_termino =? ,local =? ,id_agenda =? ,data_hora_notificacao =? "
 				+ " WHERE id = ?");
 		st.setString(1, compromisso.getTitulo());
 		st.setString(2, compromisso.getDescricao());

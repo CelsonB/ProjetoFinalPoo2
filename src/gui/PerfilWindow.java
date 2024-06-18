@@ -31,6 +31,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PerfilWindow extends JFrame {
 
@@ -42,6 +44,7 @@ public class PerfilWindow extends JFrame {
 	private JTable table;
 	private JTable tableAgenda;
 	private CompromissoService compromissoService;
+	
 	public PerfilWindow(Usuario sessao){
 		
 		usuarioService = new UsuarioService();
@@ -114,6 +117,7 @@ public class PerfilWindow extends JFrame {
 		JButton btnCompromissos = new JButton("Configurar compromissos");
 		btnCompromissos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				configurarCompromissos();
 			}
 		});
 		btnCompromissos.setBounds(10, 336, 203, 23);
@@ -144,10 +148,19 @@ public class PerfilWindow extends JFrame {
 		));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.addMouseListener(new MouseAdapter() {
+			
+		});
 		scrollPane_1.setBounds(242, 128, 182, 197);
 		contentPane.add(scrollPane_1);
 		
 		tableAgenda = new JTable();
+		tableAgenda.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				buscarCompromissos();
+			}
+		});
 		scrollPane_1.setViewportView(tableAgenda);
 		tableAgenda.setModel(new DefaultTableModel(
 			new Object[][] {
@@ -201,6 +214,8 @@ public class PerfilWindow extends JFrame {
 			agendaLista = this.agendaService.listaAgendas(sessao.getId());
 			
 			for(Agenda agenda : agendaLista) {
+				agenda.setUsuario(this.sessao);
+				
 				modelo.addRow(new Object[] {
 						agenda.getId(),
 						agenda.getNome(),
@@ -221,7 +236,7 @@ public class PerfilWindow extends JFrame {
 	public void buscarCompromissos() {
 
 		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-		
+		System.out.println("funcionou");
 		modelo.fireTableDataChanged();
 		
 		modelo.setRowCount(0);
@@ -244,6 +259,46 @@ public class PerfilWindow extends JFrame {
 		} catch (IOException | SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		
+	}
+	
+	
+	
+	public void	configurarCompromissos() {
+		
+	
+		
+		Agenda agendaSelecionada = retornarAgendaRow();
+		
+		if(agendaSelecionada !=null) {
+			new CompromissoWindow(agendaSelecionada, sessao).setVisible(true);
+			dispose();
+			
+		}else {
+			JOptionPane.showMessageDialog(null,"Nenhuma agenda selecionada","Editar compromissos",  JOptionPane.WARNING_MESSAGE );
+		}
+		
+	
+	}
+	public Agenda retornarAgendaRow() {
+		List<Agenda> agendaLista;
+		try {
+			
+			if(tableAgenda.getSelectedRow()==-1)return null;
+			String nomeAgendaSelecionada = tableAgenda.getValueAt(tableAgenda.getSelectedRow(), 1).toString();
+			agendaLista = this.agendaService.listaAgendas(sessao.getId());
+			
+			for(Agenda agenda : agendaLista) {
+			if(agenda.getNome().equals(nomeAgendaSelecionada)) {
+				agenda.setUsuario(this.sessao);
+				return agenda;
+			}
+			}
+			
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		return null;
 		
 	}
 	

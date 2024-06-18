@@ -15,9 +15,12 @@ import javax.swing.table.DefaultTableModel;
 
 import entities.Agenda;
 import entities.Compromisso;
+import entities.Usuario;
 import service.CompromissoService;
 
 import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class CompromissoWindow extends JFrame {
 
@@ -26,9 +29,11 @@ public class CompromissoWindow extends JFrame {
 	private JTable table;
 	private CompromissoService compromissoService;
 	private Agenda agenda; 
+	private Usuario sessao;
 	
-	public CompromissoWindow(Agenda agendaSelecionada) {
+	public CompromissoWindow(Agenda agendaSelecionada, Usuario sessao) {
 		this.agenda = agendaSelecionada; 
+		this.sessao = sessao;
 		compromissoService = new CompromissoService();
 		initComponents();
 		buscarCompromissos();
@@ -44,6 +49,11 @@ public class CompromissoWindow extends JFrame {
 		contentPane.setLayout(null);
 		
 		JButton btnAdicionarCompromisso = new JButton("Adicionar compromisso");
+		btnAdicionarCompromisso.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				adicionarCompromisso();
+			}
+		});
 		btnAdicionarCompromisso.setBounds(10, 196, 164, 23);
 		contentPane.add(btnAdicionarCompromisso);
 		
@@ -56,6 +66,11 @@ public class CompromissoWindow extends JFrame {
 		contentPane.add(btnAtualizarCompromisso);
 		
 		JButton btnVoltar = new JButton("Voltar");
+		btnVoltar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new PerfilWindow(sessao).setVisible(true);
+			}
+		});
 		btnVoltar.setBounds(216, 230, 164, 23);
 		contentPane.add(btnVoltar);
 		
@@ -101,4 +116,32 @@ public class CompromissoWindow extends JFrame {
 		}
 		
 	}
+	
+	public void adicionarCompromisso() {
+		new CadastrarCompromissoWindow(agenda).setVisible(true);
+		dispose();
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
