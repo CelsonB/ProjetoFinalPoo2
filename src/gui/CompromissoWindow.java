@@ -30,7 +30,7 @@ public class CompromissoWindow extends JFrame {
 	private CompromissoService compromissoService;
 	private Agenda agenda; 
 	private Usuario sessao;
-	
+	private List<Compromisso> compromissoLista;
 	public CompromissoWindow(Agenda agendaSelecionada, Usuario sessao) {
 		this.agenda = agendaSelecionada; 
 		this.sessao = sessao;
@@ -58,10 +58,39 @@ public class CompromissoWindow extends JFrame {
 		contentPane.add(btnAdicionarCompromisso);
 		
 		JButton btnApagarCompromisso = new JButton("Apagar compromisso");
+		btnApagarCompromisso.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					
+					
+					if(table.getSelectedRow()!=-1)apagarCompromissos();
+					else JOptionPane.showMessageDialog(null,"Nenhuma coluna selecionada","Apagar compromisso",  JOptionPane.WARNING_MESSAGE );	
+					
+					
+					
+					
+				} catch (IOException | SQLException e1) {
+				
+					JOptionPane.showMessageDialog(null,e1.getMessage(),"Apagar compromisso",  JOptionPane.WARNING_MESSAGE );
+				}
+			}
+		});
 		btnApagarCompromisso.setBounds(10, 230, 164, 23);
 		contentPane.add(btnApagarCompromisso);
 		
 		JButton btnAtualizarCompromisso = new JButton("Atualizar compromisso");
+		btnAtualizarCompromisso.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(table.getSelectedRow()!=-1) {
+					atualizarCompromisso();
+				}else {
+					JOptionPane.showMessageDialog(null,"Nenhuma coluna selecionada","Atualizar compromisso",  JOptionPane.WARNING_MESSAGE );	
+				}
+				
+				
+			}
+		});
 		btnAtualizarCompromisso.setBounds(216, 196, 164, 23);
 		contentPane.add(btnAtualizarCompromisso);
 		
@@ -98,7 +127,7 @@ public class CompromissoWindow extends JFrame {
 		modelo.setRowCount(0);
 		
 		
-		List<Compromisso> compromissoLista;
+		
 		try {
 			compromissoLista = this.compromissoService.listaCompromisso(this.agenda.getId());
 			
@@ -120,6 +149,40 @@ public class CompromissoWindow extends JFrame {
 	public void adicionarCompromisso() {
 		new CadastrarCompromissoWindow(agenda).setVisible(true);
 		dispose();
+	}
+	
+	public void atualizarCompromisso() {
+		
+		new CadastrarCompromissoWindow(agenda, retornarCompromisso()).setVisible(true);
+		dispose();
+	}
+	
+	
+	public void apagarCompromissos() throws IOException, SQLException  {
+		
+		
+		if(JOptionPane.showConfirmDialog(null, "deseja realmente apagar esse compromisso?")==0) {
+			if(compromissoService.apagarCompromisso(retornarCompromisso())) {
+				JOptionPane.showMessageDialog(null,"Exclusão realizada com sucesso", "Apagar compromisso",  JOptionPane.DEFAULT_OPTION );
+				buscarCompromissos();
+			}
+		}
+			
+			
+			
+		
+	}
+	
+	private Compromisso retornarCompromisso() {
+		
+		int op = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString()) ; 
+	
+		for(Compromisso comp : compromissoLista) {
+			if(comp.getId()==op) {
+				return comp;
+			}
+		}
+		return null;
 	}
 }
 

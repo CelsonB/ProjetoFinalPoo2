@@ -47,6 +47,8 @@ public class CadastrarCompromissoWindow extends JFrame {
 	private MaskFormatter mascaraHora;
 	private MaskFormatter mascaraData;
 	private Agenda agenda;
+	private JButton btnCadastrar;
+	
 	public CadastrarCompromissoWindow(Agenda agenda) {
 	
 		this.agenda = agenda;
@@ -63,6 +65,30 @@ public class CadastrarCompromissoWindow extends JFrame {
 		initCompenents();
 	
 	}
+	
+
+	public CadastrarCompromissoWindow(Agenda agenda, Compromisso compromisso) {
+	
+		this.agenda = agenda;
+		try {
+			mascaraData =  new MaskFormatter("##/##/####");
+			
+			mascaraHora = new MaskFormatter("##:##");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		initCompenents();
+		btnCadastrar.setText("Atualizar cadastro");
+		
+		textFieldTitulo.setText(compromisso.getTitulo());
+		textFieldDescricao.setText(compromisso.getDescricao());
+		textFieldLocal.setText(compromisso.getLocal());
+		
+	}
+	
 	
 	public void initCompenents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -128,7 +154,7 @@ public class CadastrarCompromissoWindow extends JFrame {
 		getContentPane().add(textFieldHoraNotificacao);
 		textFieldHoraNotificacao.setColumns(10);
 		
-		JButton btnCadastrar = new JButton("Cadastrar");
+		 btnCadastrar = new JButton("Cadastrar");
 		btnCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -145,7 +171,7 @@ public class CadastrarCompromissoWindow extends JFrame {
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PerfilWindow(agenda.getUsuario()).setVisible(true);
+				new CompromissoWindow(agenda,agenda.getUsuario()).setVisible(true);
 				dispose();
 			}
 		});
@@ -173,36 +199,30 @@ public class CadastrarCompromissoWindow extends JFrame {
 		SimpleDateFormat  formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
 		Date  date = new Date();
-		
 		Compromisso comp = new Compromisso();
-		
 		comp.setAgenda(this.agenda);
-		
 		String dataString;
-		
 		dataString =textFieldDataInicio.getText().concat(" " + textFieldHoraInicio.getText());
-		
 		date = new java.sql.Timestamp(formatter.parse(dataString).getTime() );
 		comp.setDataHoraInicio(date);
-
 		dataString =textFieldDataTermino.getText().concat(" " + textFieldHoraTermino.getText());
 		date = new java.sql.Timestamp(formatter.parse(dataString).getTime());
 		comp.setDataHoraTermino(date);
-
-		
-		
 		dataString =textFieldDataNotificacao.getText().concat(" " + textFieldHoraNotificacao.getText());
-		
 		date = new java.sql.Timestamp(formatter.parse(dataString).getTime());
 		comp.setDataHoraNotificacao(date);
-		
 		comp.setTitulo(textFieldTitulo.getText());
 		comp.setDescricao(textFieldDescricao.getText());
 		comp.setLocal(textFieldLocal.getText());
 		
 		CompromissoService compromissoService = new CompromissoService();
 		
-		compromissoService.cadastrarCompromisso(comp);
+		if(compromissoService.cadastrarCompromisso(comp)) {
+			JOptionPane.showMessageDialog(null,"Compromisso cadastrado com sucesso","Cadastrar compromissos",  JOptionPane.DEFAULT_OPTION );
+		}else {
+			JOptionPane.showMessageDialog(null,"Falha ao cadastrar compromisso","Cadastrar compromissos",  JOptionPane.WARNING_MESSAGE );
+		}
+		
 		
 	}
 }

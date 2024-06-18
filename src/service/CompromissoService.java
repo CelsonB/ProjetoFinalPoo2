@@ -20,8 +20,25 @@ public class CompromissoService {
 	
 	public boolean cadastrarCompromisso(Compromisso compCadastro) throws SQLException, IOException {
 		CompromissoDao bd = new CompromissoDao();
-		bd.cadastrarCompromisso(compCadastro);
 		
-		return true;
+		if(bd.cadastrarCompromisso(compCadastro)) {
+			return true;
+		}else {
+			return false;
+		}
+		
+		
+		
+	}
+	
+	public boolean apagarCompromisso(Compromisso compApagar) throws IOException, SQLException {
+		CompromissoDao bd = new CompromissoDao();
+		if(bd.apagarCompromisso(compApagar)) {
+			return true;
+		}else {
+			return false;
+		}
+		 
+		
 	}
 }
