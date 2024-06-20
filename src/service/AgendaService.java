@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import dao.AgendaDao;
+import dao.ConviteDao;
 import dao.UsuarioDao;
 import entities.Agenda;
+import entities.Usuario;
 
 public class AgendaService {
 
@@ -55,5 +57,13 @@ public class AgendaService {
 			return false;
 		}
 	}
+	
+	public Agenda buscarAgendaConvite(Usuario user) throws IOException, SQLException {
+		
+		AgendaDao bd = new AgendaDao();
+		return bd.buscarAgendaConvite(user.getId());
+		
+	}
+
 
 }

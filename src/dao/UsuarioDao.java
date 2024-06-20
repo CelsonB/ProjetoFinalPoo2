@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import entities.Usuario;
 
@@ -12,18 +14,44 @@ public class UsuarioDao  extends BancoDeDados{
 	
 	
 	
-//	CREATE TABLE usuarios (
-//			  id INT PRIMARY KEY auto_increment,
-//			  nome_completo VARCHAR(100) NOT NULL,
-//			  data_nascimento DATE NOT NULL,
-//			  genero ENUM('M', 'F') NOT NULL,
-//			  foto_pessoal BLOB,
-//			  email VARCHAR(100) NOT NULL,
-//			  nome_usuario VARCHAR(50) NOT NULL UNIQUE,
-//			  senha VARCHAR(255) NOT NULL
-//			);
 	
-	public boolean cadastrarUsuarios(Usuario userCadastro) throws IOException, SQLException {
+	
+	
+	public List<Usuario> listarUsuarios() throws IOException, SQLException{
+	
+		PreparedStatement st;
+		super.Conectar();
+		st = super.conn.prepareStatement("SELECT * FROM usuarios");
+	
+	
+		
+		ResultSet result= st.executeQuery();
+		
+		List<Usuario> listaTemp = new ArrayList<>();
+		
+		while(result.next()) {
+			Usuario user = new Usuario();
+			user.setId(result.getInt("id"));
+			user.setDataNascimento(result.getDate("data_nascimento"));
+			user.setNomeCompleto(result.getString("nome_completo"));
+			user.setEmail(result.getString("email"));
+			user.setSenha(result.getString("senha"));
+			if(result.getString("genero")=="M") {
+				user.setGenero(Usuario.Genero.M);
+			}else {
+				user.setGenero(Usuario.Genero.F);
+			}
+			user.setNomeUsuario(result.getString("nome_usuario"));
+			listaTemp.add(user);
+		}
+		
+		return listaTemp;
+		
+			
+	}
+
+	
+	public int cadastrarUsuarios(Usuario userCadastro) throws IOException, SQLException {
 		
 		java.util.Date utilDate = new java.util.Date();
 		 
@@ -39,9 +67,17 @@ public class UsuarioDao  extends BancoDeDados{
 		int result= st.executeUpdate();
 		
 		if(result>0) {
-			return true;
+			st = super.conn.prepareStatement("select id from usuarios where email = ? and senha = ? ");
+			
+			st.setString(1,userCadastro.getEmail());
+			st.setString(2,userCadastro.getSenha());
+			
+			ResultSet rs = st.executeQuery();
+			rs.next();
+			return rs.getInt("id");
+			
 		}else {
-			return false;
+			return 0;
 		}
 	}
 	

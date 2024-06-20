@@ -4,11 +4,20 @@ import entities.Usuario;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import dao.UsuarioDao;
 public class UsuarioService {
 
+	
+	
+	public List<Usuario> listarUsuarios() throws IOException, SQLException{
+		UsuarioDao bd = new UsuarioDao();
+		
+		return bd.listarUsuarios();
+	}
+	
 	
 	
 	
@@ -17,7 +26,11 @@ public class UsuarioService {
 		
 		
 
-				if(bd.cadastrarUsuarios(user)) {
+		int idUsuario  = bd.cadastrarUsuarios(user);
+				if(idUsuario>0) {
+					AgendaService agendaService = new AgendaService();
+					
+					agendaService.criarAgenda("Convites", "Todos os convites de compromisso do usuario", idUsuario );
 					return true;
 				}
 				else {
@@ -41,8 +54,7 @@ public class UsuarioService {
 	
 	public Usuario visualizarUsuario(int id) throws IOException, SQLException {
 		UsuarioDao bd = new UsuarioDao();		
-//		String email = user.getEmail();
-//		String senha = user.getSenha();
+
 		
 
 		return bd.visualizarUsuario(id);

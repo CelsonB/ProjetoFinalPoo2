@@ -120,7 +120,7 @@ public class PerfilWindow extends JFrame {
 				configurarCompromissos();
 			}
 		});
-		btnCompromissos.setBounds(10, 336, 203, 23);
+		btnCompromissos.setBounds(10, 336, 194, 23);
 		contentPane.add(btnCompromissos);
 		
 		JButton btnAgenda = new JButton("Configurar agendas");
@@ -130,11 +130,11 @@ public class PerfilWindow extends JFrame {
 				abrirAgenda();
 			}
 		});
-		btnAgenda.setBounds(242, 336, 182, 23);
+		btnAgenda.setBounds(230, 336, 194, 23);
 		contentPane.add(btnAgenda);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 127, 203, 198);
+		scrollPane.setBounds(10, 127, 194, 198);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -143,7 +143,7 @@ public class PerfilWindow extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-				"Titulo", "Data de inicio"
+				"id","Titulo", "Data de inicio"
 			}
 		));
 		
@@ -151,7 +151,7 @@ public class PerfilWindow extends JFrame {
 		scrollPane_1.addMouseListener(new MouseAdapter() {
 			
 		});
-		scrollPane_1.setBounds(242, 128, 182, 197);
+		scrollPane_1.setBounds(230, 128, 194, 197);
 		contentPane.add(scrollPane_1);
 		
 		tableAgenda = new JTable();
@@ -170,19 +170,35 @@ public class PerfilWindow extends JFrame {
 			}
 		));
 		
-		JButton btnSelecionarAgenda = new JButton("Selecionar agenda");
-		btnSelecionarAgenda.addActionListener(new ActionListener() {
+		JButton btnEnviarConvites = new JButton("Enviar convites");
+		btnEnviarConvites.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(tableAgenda.getSelectedRow()!=-1) {
-					buscarCompromissos();
+			
+				if(table.getSelectedRow()!=-1) {
+					new ConvitesWindow(sessao,retornarCompromisso()).setVisible(true);
+					dispose();
 				}else {
-					JOptionPane.showMessageDialog(null, "Nenhuma agenda selecionada", "Editar agenda",  JOptionPane.WARNING_MESSAGE );
+					JOptionPane.showMessageDialog(null, "Nenhum compromisso selecionado", "Convites", JOptionPane.WARNING_MESSAGE);
 				}
-				
 			}
 		});
-		btnSelecionarAgenda.setBounds(242, 370, 182, 23);
-		contentPane.add(btnSelecionarAgenda);
+		btnEnviarConvites.setBounds(10, 370, 194, 23);
+		contentPane.add(btnEnviarConvites);
+		
+		JButton btnVerConvites = new JButton("Ver convites");
+		btnVerConvites.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+					new ConvitesWindow(sessao).setVisible(true);
+					dispose();
+			
+				
+			
+			}
+		});
+		btnVerConvites.setBounds(230, 370, 196, 23);
+		contentPane.add(btnVerConvites);
 		
 		
 	}
@@ -250,8 +266,10 @@ public class PerfilWindow extends JFrame {
 			for(Compromisso compromisso : compromissoLista) {
 				modelo.addRow(new Object[] {
 						
+						compromisso.getId(),
 						compromisso.getTitulo(),
-						compromisso.getDataHoraInicio()
+						compromisso.getDataHoraInicio(),
+						
 						
 				});
 			}
@@ -263,8 +281,30 @@ public class PerfilWindow extends JFrame {
 	}
 	
 	
+	private Compromisso retornarCompromisso() {
+		List<Compromisso> agendaCompromisso;
+		try {
+			
+			if(table.getSelectedRow()==-1)return null;
+			int idCompromissoSelecionado = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+			agendaCompromisso = this.compromissoService.listaCompromisso(retornarAgendaRow().getId());
+			
+			for(Compromisso comp : agendaCompromisso) {
+			if(comp.getId()==idCompromissoSelecionado) {
+			
+				return comp;
+			}
+			}
+			
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		return null;
+		
+	}
 	
-	public void	configurarCompromissos() {
+	
+	private void	configurarCompromissos() {
 		
 	
 		
@@ -280,7 +320,9 @@ public class PerfilWindow extends JFrame {
 		
 	
 	}
-	public Agenda retornarAgendaRow() {
+	
+	
+	private Agenda retornarAgendaRow() {
 		List<Agenda> agendaLista;
 		try {
 			

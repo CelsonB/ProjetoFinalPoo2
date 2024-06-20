@@ -82,5 +82,34 @@ public class AgendaDao extends BancoDeDados {
 		}
 	}
 	
+	public Agenda buscarAgendaConvite(int id) throws IOException, SQLException {
+
+		PreparedStatement st;
+		super.Conectar();
+		st = super.conn.prepareStatement("Select * from Agendas where id_usuario = ? and nome = ? ");
+		st.setInt(1, id);
+		st.setString(2, "Convites");
+		ResultSet result= st.executeQuery();
+		
+		
+		if(result.next()) {
+			Agenda agenda = new Agenda();
+			agenda.setId(result.getInt("id"));
+			agenda.setNome(result.getString("nome"));
+			agenda.setDescricao(result.getString("descricao"));
+			return agenda;
+		}else {
+			return null;
+		}
+	
+		
+			
+	
+	}
+		
+		
+		
+		
+	
 	
 }
