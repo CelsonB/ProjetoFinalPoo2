@@ -7,7 +7,7 @@ public class Usuario {
     private String nomeCompleto;
     private Date dataNascimento;
     private Genero genero;
-    //private byte[] fotoPessoal; depois eu resolvo essa parte 
+    private byte[] fotoPessoal;
     private String email;
     private String nomeUsuario;
     private String senha;
@@ -57,13 +57,13 @@ public class Usuario {
         this.genero = genero;
     }
 
-//    public byte[] getFotoPessoal() {
-//        return fotoPessoal;
-//    }
-//
-//    public void setFotoPessoal(byte[] fotoPessoal) {
-//        this.fotoPessoal = fotoPessoal;
-//    }
+    public byte[] getFotoPessoal() {
+        return fotoPessoal;
+    }
+
+    public void setFotoPessoal(byte[] fotoPessoal) {
+        this.fotoPessoal = fotoPessoal;
+    }
 
     public String getEmail() {
         return email;

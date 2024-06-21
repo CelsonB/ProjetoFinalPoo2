@@ -19,10 +19,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
 
 public class CadastrarWindow extends JFrame {
 
@@ -35,6 +39,9 @@ public class CadastrarWindow extends JFrame {
 	private JFormattedTextField textFieldDataDeNascimento;
 	private JComboBox comboBoxGenero ;
 
+	private File selectedFile;
+	
+	
 //	public static void main(String[] args) {
 //		EventQueue.invokeLater(new Runnable() {
 //			public void run() {
@@ -153,6 +160,38 @@ public class CadastrarWindow extends JFrame {
 		});
 		btnVoltar.setBounds(144, 216, 89, 23);
 		contentPane.add(btnVoltar);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Foto", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(300, 14, 124, 146);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblFoto = new JLabel("");
+		lblFoto.setBounds(0, 27, 108, 119);
+		panel.add(lblFoto);
+		
+		JButton btnSelecionarFoto = new JButton("Selecionar foto");
+		btnSelecionarFoto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+					try {
+					
+					JFileChooser fileChooser = new JFileChooser();
+	                int returnValue = fileChooser.showOpenDialog(null);
+	                if (returnValue == JFileChooser.APPROVE_OPTION) {
+	                    selectedFile = fileChooser.getSelectedFile();
+	                 
+	                    lblFoto.setIcon(new ImageIcon(selectedFile.getPath()));
+	                }
+	                
+				}catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Atualizar foto de perfil", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+		btnSelecionarFoto.setBounds(310, 174, 89, 23);
+		contentPane.add(btnSelecionarFoto);
 	}
 	
 	private UsuarioService usuarioService = new UsuarioService();
@@ -184,7 +223,10 @@ public class CadastrarWindow extends JFrame {
 				userCadastro.setGenero(Usuario.Genero.M);
 			}
 			userCadastro.setSenha(textFieldSenha.getText());
-		
+			
+			
+			 byte[] imageBytes = selectedFile.getPath().getBytes();
+			userCadastro.setFotoPessoal(imageBytes);
 			if(usuarioService.realizarCadastro(userCadastro)) {
 				JOptionPane.showMessageDialog(null, "Usuario cadastrado com sucesso");
 				

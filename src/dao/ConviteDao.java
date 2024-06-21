@@ -1,6 +1,7 @@
 package dao;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -94,5 +95,8 @@ public class ConviteDao extends BancoDeDados{
 	}
 	
 	
+	
 
+	
+	
 }

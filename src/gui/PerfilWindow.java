@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,6 +27,8 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.BevelBorder;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
@@ -33,6 +36,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
 
 public class PerfilWindow extends JFrame {
 
@@ -45,6 +49,12 @@ public class PerfilWindow extends JFrame {
 	private JTable tableAgenda;
 	private CompromissoService compromissoService;
 	
+	
+	
+    private JButton uploadButton;
+    
+    private File selectedFile;
+    
 	public PerfilWindow(Usuario sessao){
 		
 		usuarioService = new UsuarioService();
@@ -68,7 +78,7 @@ public class PerfilWindow extends JFrame {
 	
 	public void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 443);
+		setBounds(100, 100, 499, 481);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -77,28 +87,33 @@ public class PerfilWindow extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.setBounds(10, 10, 285, 99);
+		panel.setBounds(10, 10, 336, 144);
 		contentPane.add(panel);
 		
 		JLabel lblNomeCompleto = new JLabel("Nome: " + this.sessao.getNomeCompleto());
-		lblNomeCompleto.setBounds(10, 8, 265, 14);
+		lblNomeCompleto.setBounds(10, 17, 173, 14);
 		
 		JLabel lblEmail = new JLabel("Email: " +this.sessao.getEmail());
-		lblEmail.setBounds(10, 52, 265, 14);
+		lblEmail.setBounds(10, 79, 173, 14);
 		
 		JLabel lblDataDeNascimento = new JLabel("Data de nascimento: " +this.sessao.getDataNascimento().toString());
-		lblDataDeNascimento.setBounds(10, 74, 265, 14);
+		lblDataDeNascimento.setBounds(10, 110, 173, 14);
 		
-		JLabel lblGenero = new JLabel("Genero: " +this.sessao.getGenero().toString());
-		lblGenero.setBounds(10, 30, 265, 14);
+		JLabel lblGenero = new JLabel("Genero: " + retornarGenero());
+		lblGenero.setBounds(10, 48, 173, 14);
 		panel.setLayout(null);
 		panel.add(lblNomeCompleto);
 		panel.add(lblEmail);
 		panel.add(lblDataDeNascimento);
 		panel.add(lblGenero);
 		
+		JLabel lblFotoPerfil = new JLabel("");
+		lblFotoPerfil.setIcon(new ImageIcon("C:\\Users\\Acer\\Desktop\\cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"));
+		lblFotoPerfil.setBounds(193, 17, 133, 107);
+		panel.add(lblFotoPerfil);
+		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(305, 10, 119, 99);
+		panel_1.setBounds(356, 10, 119, 144);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -114,13 +129,37 @@ public class PerfilWindow extends JFrame {
 		btnDeslogar.setBounds(0, 67, 119, 23);
 		panel_1.add(btnDeslogar);
 		
+		JButton btnAtualizarImagem = new JButton("AtualizarImagem");
+		btnAtualizarImagem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					JFileChooser fileChooser = new JFileChooser();
+	                int returnValue = fileChooser.showOpenDialog(null);
+	                if (returnValue == JFileChooser.APPROVE_OPTION) {
+	                    selectedFile = fileChooser.getSelectedFile();
+	                    usuarioService.AtualizarImagem(selectedFile, sessao);
+	                    lblFotoPerfil.setIcon(new ImageIcon(usuarioService.pegarImagem(sessao)));
+	                }
+	                
+				}catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Atualizar foto de perfil", JOptionPane.WARNING_MESSAGE);
+				}
+				
+				
+			}
+		});
+		btnAtualizarImagem.setBounds(0, 101, 119, 23);
+		panel_1.add(btnAtualizarImagem);
+		
 		JButton btnCompromissos = new JButton("Configurar compromissos");
 		btnCompromissos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				configurarCompromissos();
 			}
 		});
-		btnCompromissos.setBounds(10, 336, 194, 23);
+		btnCompromissos.setBounds(10, 374, 194, 23);
 		contentPane.add(btnCompromissos);
 		
 		JButton btnAgenda = new JButton("Configurar agendas");
@@ -130,11 +169,11 @@ public class PerfilWindow extends JFrame {
 				abrirAgenda();
 			}
 		});
-		btnAgenda.setBounds(230, 336, 194, 23);
+		btnAgenda.setBounds(279, 374, 194, 23);
 		contentPane.add(btnAgenda);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 127, 194, 198);
+		scrollPane.setBounds(10, 165, 194, 198);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -151,7 +190,7 @@ public class PerfilWindow extends JFrame {
 		scrollPane_1.addMouseListener(new MouseAdapter() {
 			
 		});
-		scrollPane_1.setBounds(230, 128, 194, 197);
+		scrollPane_1.setBounds(281, 166, 194, 197);
 		contentPane.add(scrollPane_1);
 		
 		tableAgenda = new JTable();
@@ -182,7 +221,7 @@ public class PerfilWindow extends JFrame {
 				}
 			}
 		});
-		btnEnviarConvites.setBounds(10, 370, 194, 23);
+		btnEnviarConvites.setBounds(10, 408, 194, 23);
 		contentPane.add(btnEnviarConvites);
 		
 		JButton btnVerConvites = new JButton("Ver convites");
@@ -197,7 +236,7 @@ public class PerfilWindow extends JFrame {
 			
 			}
 		});
-		btnVerConvites.setBounds(230, 370, 196, 23);
+		btnVerConvites.setBounds(279, 408, 196, 23);
 		contentPane.add(btnVerConvites);
 		
 		

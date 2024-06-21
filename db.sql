@@ -10,10 +10,17 @@ CREATE TABLE usuarios (
   nome_completo VARCHAR(100) NOT NULL,
   data_nascimento DATE NOT NULL,
   genero ENUM('M', 'F') NOT NULL,
-  foto_pessoal BLOB,
   email VARCHAR(100) NOT NULL,
   nome_usuario VARCHAR(50) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE foto_usuario (
+ id INT PRIMARY KEY auto_increment,
+ foto_pessoal BLOB,
+ id_usuario int not null,
+ FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+  
 );
 
 CREATE TABLE agendas (
@@ -25,7 +32,7 @@ CREATE TABLE agendas (
 );
 
 CREATE TABLE compromissos (
-  id INT PRIMARY KEY auto_increment,
+  id INT PRIMARY KEY,
   titulo VARCHAR(100) NOT NULL,
   descricao TEXT,
   data_hora_inicio DATETIME NOT NULL,
