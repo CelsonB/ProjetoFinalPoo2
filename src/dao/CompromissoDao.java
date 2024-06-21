@@ -9,6 +9,7 @@ import java.util.List;
 
 import entities.Agenda;
 import entities.Compromisso;
+import entities.Usuario;
 
 public class CompromissoDao extends BancoDeDados {
 
@@ -166,7 +167,36 @@ public class CompromissoDao extends BancoDeDados {
 	
 	
 	
-	
+	public List<Compromisso> verificarCompromissos(Usuario sessao) throws IOException, SQLException {
+List<Compromisso> listaCompromissos = new ArrayList<>();
+		
+		
+		
+
+
+		java.util.Date utilDate = new java.util.Date();
+		 
+		PreparedStatement st;
+		super.Conectar();
+		st = super.conn.prepareStatement("SELECT * FROM compromissos INNER JOIN agendas ON agendas.id = compromissos.id_agenda WHERE id_usuario = ? AND data_hora_notificacao <= NOW()");
+		st.setInt(1, sessao.getId());
+		ResultSet result = st.executeQuery();
+		
+		while(result.next()) {
+			Compromisso compromisso = new Compromisso();
+			compromisso.setId(result.getInt("id"));
+			compromisso.setTitulo(result.getString("titulo"));
+			compromisso.setDescricao(result.getString("descricao"));
+			compromisso.setTitulo(result.getString("titulo"));
+			compromisso.setDataHoraInicio(result.getTime("data_hora_inicio"));
+			compromisso.setDataHoraTermino(result.getTime("data_hora_termino"));
+			compromisso.setDataHoraNotificacao(result.getTime("data_hora_notificacao"));
+			compromisso.setLocal(result.getString("local"));
+			listaCompromissos.add(compromisso);
+		}
+		
+		return listaCompromissos;
+	}
 	
 	
 	

@@ -15,6 +15,7 @@ import entities.Compromisso;
 import entities.Usuario;
 import service.AgendaService;
 import service.CompromissoService;
+import service.NotificacaoService;
 import service.UsuarioService;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -56,7 +57,13 @@ public class PerfilWindow extends JFrame {
     private File selectedFile;
     
 	public PerfilWindow(Usuario sessao){
+		NotificacaoService notificacaoService = new NotificacaoService(sessao);
 		
+		
+		  Thread serviceThread = new Thread(notificacaoService);
+		  serviceThread.start();
+		  
+	
 		usuarioService = new UsuarioService();
 		compromissoService = new CompromissoService();
 		try {
